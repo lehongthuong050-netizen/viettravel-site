@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VietTravel - Đại lý lữ hành</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <style>
+    /* Simple responsive styles */
+    :root{--blue:#0a66ff;--green:#059669;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; color:#111}
+    header{background:#fff; border-bottom:1px solid #e6e6e6; padding:18px 16px; position:sticky; top:0; z-index:20}
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#0ea5ff,#06b6d4);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    nav a{margin-left:18px;text-decoration:none;color:var(--muted);font-weight:600}
+    .hero{background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=60');background-size:cover;background-position:center;color:white;padding:60px 0}
+    .hero-inner{background:rgba(0,0,0,0.35);padding:28px;border-radius:10px}
+    .search{display:flex;gap:8px;margin-top:14px}
+    .search input,.search select{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);flex:1}
+    .search button{padding:10px 14px;border-radius:8px;border:0;background:var(--blue);color:white;font-weight:700}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+    .card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(16,24,40,0.06);display:flex;flex-direction:column}
+    .card img{width:100%;height:160px;object-fit:cover}
+    .card-body{padding:12px;flex:1;display:flex;flex-direction:column}
+    .price{margin-top:auto;font-weight:800}
+    .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+    .btn-primary{background:var(--green);color:white}
+    .btn-outline{background:#fff;border:1px solid #e6e6e6}
+    aside{background:#fff;padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.04)}
+    footer{padding:28px 0;margin-top:24px;color:var(--muted);font-size:14px}
+    /* Responsive */
+    @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.grid{grid-template-columns:1fr}.search{flex-direction:column}nav{display:none}header{padding:12px}}
+    /* Modal */
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:60;display:none}
+    .modal{background:#fff;padding:18px;border-radius:10px;max-width:540px;width:94%}
+    .close{background:#eee;border-radius:6px;padding:6px;cursor:pointer;border:0}
+  </style>
+</head>
+<body>
+  <header><div class="container" style="display:flex;align-items:center;justify-content:space-between">
+    <div class="brand">
+      <div class="logo">VT</div>
+      <div>
+        <div style="font-weight:800">VietTravel</div>
+        <div style="font-size:13px;color:var(--muted)">Tour trọn gói • Hỗ trợ 24/7</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#home">Trang chủ</a>
+      <a href="#tours">Tour</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Liên hệ</a>
+    </nav>
+  </div></header>
+
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-inner">
+        <h1 style="font-size:28px;margin:0">Khám phá thế giới cùng VietTravel</h1>
+        <p style="margin:6px 0 0">Hành trình trọn gói, giá minh bạch, hỗ trợ visa và thanh toán an toàn.</p>
+        <div class="search" style="margin-top:12px">
+          <input id="q" placeholder="Tìm tour, địa điểm..." />
+          <select id="filter">
+            <option value="all">Tất cả</option>
+            <option value="trongnuoc">Trong nước</option>
+            <option value="quocte">Quốc tế</option>
+            <option value="nghiduong">Nghỉ dưỡng</option>
+          </select>
+          <button id="searchBtn" class="btn">Tìm</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" style="display:grid;grid-template-columns:2fr 1fr;gap:18px;padding:22px 16px 48px">
+    <div>
+      <h2 id="tours">Tour nổi bật</h2>
+      <div class="grid" id="tourGrid"></div>
+      <div style="margin-top:18px" id="noResults" hidden>Không tìm thấy tour.</div>
+    </div>
+
+    <aside>
+      <h3>Thanh toán & Giỏ hàng</h3>
+      <div style="margin-top:8px">
+        <div>Hotline: <strong style="color:#dc2626">1900 1234</strong></div>
+        <div style="margin-top:10px">
+          <button class="btn btn-primary" id="checkout">Thanh toán (mô phỏng)</button>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <h4>Giỏ hàng</h4>
+        <ul id="cartList" style="margin:8px 0;padding-left:16px;color:var(--muted)"></ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="container">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div><strong>VietTravel</strong><div style="color:var(--muted)">Giấy phép: 01-XYZ-2025</div></div>
+      <div style="color:var(--muted)">© VietTravel — Thiết kế mẫu. Nhận triển khai & tùy chỉnh theo yêu cầu.</div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div id="modal" class="modal-back">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modalTitle">Đặt tour</strong>
+        <button class="close" id="modalClose">×</button>
+      </div>
+      <div id="modalBody" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <script>
+    // Mock tours data
+    const tours = [
+      {id:1, title:"Tour Hạ Long 3N2Đ", location:"Hạ Long, Việt Nam", price:2990000, duration:"3N2Đ", img:"https://images.unsplash.com/photo-1505765054891-7fb0f8c1b3a6?auto=format&fit=crop&w=1200&q=60", tags:["trongnuoc","nghiduong"]},
+      {id:2, title:"Tour Thái Lan - Bangkok 5N4Đ", location:"Bangkok, Thái Lan", price:8990000, duration:"5N4Đ", img:"https://images.unsplash.com/photo-1544476915-ed1370594142?auto=format&fit=crop&w=1200&q=60", tags:["quocte","muasam"]},
+      {id:3, title:"Tour Đà Nẵng - Hội An 4N3Đ", location:"Đà Nẵng & Hội An", price:3990000, duration:"4N3Đ", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=60", tags:["trongnuoc","khampha"]}
+    ];
+
+    const tourGrid = document.getElementById('tourGrid');
+    const cartList = document.getElementById('cartList');
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modalBody');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalClose = document.getElementById('modalClose');
+    let cart = [];
+
+    function formatCurrency(n){ return n.toLocaleString('vi-VN') + ' ₫'; }
+
+    function renderTours(list){
+      tourGrid.innerHTML = '';
+      if(!list.length){ document.getElementById('noResults').hidden = false; return; }
+      document.getElementById('noResults').hidden = true;
+      list.forEach(t => {
+        const el = document.createElement('article');
+        el.className = 'card';
+        el.innerHTML = `
+          <img src="${t.img}" alt="${t.title}" />
+          <div class="card-body">
+            <div style="font-weight:700">${t.title}</div>
+            <div style="color:var(--muted);font-size:13px">${t.location} • ${t.duration}</div>
+            <div class="price">${formatCurrency(t.price)}</div>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button class="btn btn-outline" onclick="viewTour(${t.id})">Xem chi tiết</button>
+              <button class="btn btn-primary" onclick="bookNow(${t.id})">Đặt ngay</button>
+              <button class="btn btn-outline" onclick="addToCart(${t.id})">Thêm giỏ</button>
+            </div>
+          </div>
+        `;
+        tourGrid.appendChild(el);
+      });
+    }
+
+    function viewTour(id){
+      const t = tours.find(x=>x.id===id);
+      modalTitle.textContent = t.title;
+      modalBody.innerHTML = `
+        <img src="${t.img}" style="width:100%;height:160px;object-fit:cover;border-radius:6px" />
+        <p style="margin:8px 0;"><strong>Điểm đến:</strong> ${t.location}</p>
+        <p style="margin:4px 0;"><strong>Thời gian:</strong> ${t.duration}</p>
+        <p style="margin:4px 0;"><strong>Giá:</strong> ${formatCurrency(t.price)}</p>
+        <p style="margin:8px 0;color:var(--muted)">Lịch trình mẫu: Ngày 1: ... Ngày 2: ... Ngày 3: ...</p>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-primary" onclick="bookNow(${t.id})">Đặt tour</button>
+          <button class="btn btn-outline" onclick="modal.style.display='none'">Đóng</button>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    function addToCart(id){
+      const t = tours.find(x=>x.id===id);
+      cart.push(t);
+      renderCart();
+      alert('Đã thêm ' + t.title + ' vào giỏ.');
+    }
+
+    function renderCart(){
+      cartList.innerHTML = '';
+      if(!cart.length){ cartList.innerHTML = '<li style="color:var(--muted)">Chưa có tour nào</li>'; return; }
+      cart.forEach((c,i)=>{
+        const li = document.createElement('li');
+        li.textContent = `${c.title} — ${formatCurrency(c.price)}`;
+        cartList.appendChild(li);
+      });
+    }
+
+    function bookNow(id){
+      const t = tours.find(x=>x.id===id);
+      modalTitle.textContent = 'Đặt tour: ' + t.title;
+      modalBody.innerHTML = `
+        <p><strong>Giá:</strong> ${formatCurrency(t.price)}</p>
+        <form id="bookingForm">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input name="name" required placeholder="Họ tên" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e6e6e6" />
+            <input name="phone" required placeholder="Số điện thoại" style="flex:1;padding:8px;border-radius:6px;border:1px solid #e6e6e6" />
+          </div>
+          <input name="email" type="email" required placeholder="Email" style="width:100%;margin-top:8px;padding:8px;border-radius:6px;border:1px solid #e6e6e6" />
+          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+            <button type="button" class="btn btn-outline" onclick="modal.style.display='none'">Hủy</button>
+            <button type="submit" class="btn btn-primary">Xác nhận</button>
+          </div>
+        </form>
+      `;
+      modal.style.display = 'flex';
+      document.getElementById('bookingForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        alert('Đặt tour thành công (mẫu). Chúng tôi sẽ liên hệ bạn sớm!');
+        modal.style.display = 'none';
+      });
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', ()=>{
+      const q = document.getElementById('q').value.toLowerCase().trim();
+      const f = document.getElementById('filter').value;
+      const res = tours.filter(t=>{
+        if(f !== 'all' && !t.tags.includes(f)) return false;
+        if(!q) return true;
+        return t.title.toLowerCase().includes(q) || t.location.toLowerCase().includes(q) || t.tags.join(' ').includes(q);
+      });
+      renderTours(res);
+    });
+
+    modalClose.addEventListener('click', ()=> modal.style.display = 'none');
+    window.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none' });
+
+    // initial render
+    renderTours(tours);
+    renderCart();
+
+    document.getElementById('checkout').addEventListener('click', ()=>{
+      if(!cart.length){ alert('Giỏ hàng trống.'); return; }
+      alert('Thanh toán mô phỏng: ' + cart.length + ' tour. (Để tích hợp thanh toán thực tế, cần backend/API).');
+    });
+  </script>
+</body>
+</html>
